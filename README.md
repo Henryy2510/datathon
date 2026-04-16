@@ -1,3 +1,5 @@
+# Tiêu chí chấm điểm Datathon
+
 - [ ] Phân tích câu hỏi và đặt vấn đề
 - [ ] EDA 
 - [ ] Chọn model ML
