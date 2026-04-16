@@ -5,11 +5,23 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "altair>=6.0.0",
+    "catboost>=1.2.10",
+    "eli5>=0.16.0",
+    "elis>=0.0.1rc1",
     "ipykernel>=7.2.0",
     "jinja2>=3.1.6",
+    "jupyterlab>=4.5.6",
+    "lightgbm>=4.6.0",
     "matplotlib>=3.10.8",
+    "networkx>=3.6.1",
+    "notebook>=7.5.5",
     "pandas>=3.0.2",
     "scikit-learn>=1.8.0",
     "seaborn>=0.13.2",
+    "shap>=0.51.0",
     "tqdm>=4.67.3",
+    "vega>=4.1.0",
+    "vega-datasets>=0.9.0",
+    "xgboost>=3.2.0",
 ]
