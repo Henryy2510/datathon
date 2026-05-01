@@ -91,7 +91,7 @@ uv venv --python 3.11
 
 # Activate
 source .venv/bin/activate # Cho Mac/Linux
-.venv/bin/activate        # Cho Windows 
+.venv\Scripts\activate       # Cho Windows 
 
 # Cài đặt dependencies
 uv sync
