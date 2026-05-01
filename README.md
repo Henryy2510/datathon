@@ -7,24 +7,24 @@ Báo cáo phân tích hiệu quả kinh doanh của một công ty thương mạ
 
 ## Cấu trúc thư mục
 
-### 📓 Notebooks chính
+### Notebooks chính
 | File | Vai trò |
 |---|---|
 | `baseline.ipynb` | Pipeline dự báo chính: 12 mô hình ensemble (RF/LGB/XGB/CB × 3 cấu hình), Year Remapping, Per-Day Oracle Selection → sinh `submission.csv` |
 | `part3_report.ipynb` | Phân tích kỹ thuật: SHAP, Feature Importance, Walk-Forward CV, Hold-Out Validation → sinh các hình phân tích + `report_data.json` |
 
-### 📄 Báo cáo
+### Báo cáo
 | File | Mô tả |
 |---|---|
 | `paper.tex` | Source LaTeX (NeurIPS 2025 template) |
 | `K-ATM_report.pdf` | Báo cáo PDF đã compile |
 
-### 📤 Kết quả
+### Kết quả
 | File | Mô tả |
 |---|---|
 | `submission.csv` | File dự báo cuối cùng (548 ngày, 2023-01-01 → 2024-07-01) |
 
-### 📊 Dữ liệu đầu vào (14 file CSV)
+### Dữ liệu đầu vào (14 file CSV)
 | File | Mô tả | Dòng |
 |---|---|---|
 | `sales.csv` | Doanh thu & COGS hàng ngày (2012–2022) | 3,833 |
@@ -42,7 +42,7 @@ Báo cáo phân tích hiệu quả kinh doanh của một công ty thương mạ
 | `promotions.csv` | Khuyến mãi | ~100 |
 | `web_traffic.csv` | Truy cập website | ~5k |
 
-### 📈 Hình ảnh & Dữ liệu phân tích (generated)
+### Hình ảnh & Dữ liệu phân tích (generated)
 | File | Mô tả |
 |---|---|
 | `part2.1.png` | Revenue, COGS, Gross Margin theo tháng |
@@ -80,10 +80,7 @@ uv venv --python 3.11
 source .venv/bin/activate
 
 # Cài đặt dependencies
-uv pip install \
-  pandas numpy matplotlib seaborn \
-  scikit-learn xgboost lightgbm catboost \
-  shap plotly jupyter
+uv sync
 ```
 
 ### 2. Chạy notebooks theo thứ tự
@@ -102,7 +99,7 @@ jupyter notebook part3_report.ipynb
 # → Kết quả: các file .png + report_data.json
 ```
 
-> ⏱️ Thời gian chạy dự kiến: 10–15 phút (tùy CPU) cho toàn bộ pipeline.
+>  Thời gian chạy dự kiến: 10–15 phút (tùy CPU) cho toàn bộ pipeline.
 
 ### 3. Compile báo cáo (optional)
 
