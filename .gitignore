@@ -11,5 +11,13 @@ wheels/
 
 # data
 data/
+
+test/*model*
+src/*model*
+test/datathon-2026-round-1/*submissionv*
+src/datathon-2026-round-1/*submissionv*
+
+# tài liệu tham khảo
 Maternal Health Risk Prediction Challenge/
 abc.docx
+Rossmann_nr1_doc.pdf
