@@ -93,6 +93,7 @@ uv sync
 source .venv/bin/activate # Cho Mac/Linux
 .venv\Scripts\activate       # Cho Windows 
 ```
+![alt text](pick_kernel.png)
 
 ### 2. Chạy notebooks theo thứ tự
 
