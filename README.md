@@ -89,7 +89,7 @@ Báo cáo phân tích hiệu quả kinh doanh của một công ty thương mạ
 # Cài đặt dependencies
 uv sync
 
-# Activate virtual environment 
+# Activate virtual environment (Choose "datathon" kernel)
 source .venv/bin/activate # Cho Mac/Linux
 .venv\Scripts\activate       # Cho Windows 
 ```
