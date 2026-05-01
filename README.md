@@ -89,10 +89,7 @@ Báo cáo phân tích hiệu quả kinh doanh của một công ty thương mạ
 # Cài đặt dependencies
 uv sync
 
-# Tạo virtual environment
-uv venv --python 3.11
-
-# Activate
+# Activate virtual environment 
 source .venv/bin/activate # Cho Mac/Linux
 .venv\Scripts\activate       # Cho Windows 
 ```
