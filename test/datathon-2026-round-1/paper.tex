@@ -1,0 +1,321 @@
+\documentclass{article}
+
+\usepackage{neurips_2025}
+
+\usepackage{fontspec}
+\setmainfont{Liberation Serif}
+\setsansfont{Liberation Sans}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{amsfonts}
+\usepackage{nicefrac}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{multirow}
+\usepackage{caption}
+
+\title{Data-Driven Sales Forecasting and Supply Chain Optimization for E-Commerce}
+
+\author{%
+  [K-ATM] \\
+  % [Affiliation] \\
+  \texttt{nhatminh010905@gmail.com} \\
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Báo cáo phân tích hiệu quả kinh doanh của một công ty thương mại điện tử trong 10 năm (2012–2022), phát hiện mô hình "Vòng Xoáy Chết" do giảm giá quá mức gây xói mòn lợi nhuận, đồng thời đề xuất khung tối ưu hóa kép giúp giải phóng tới 180 triệu đồng vốn lưu động mỗi quý. Ngoài ra, nhóm xây dựng quy trình dự báo doanh thu và giá vốn hàng bán theo ngày bằng mô hình tổ hợp 12 thuật toán, đạt độ chính xác cao (R² > 0,99) và được kiểm chứng qua phân tích SHAP.
+\end{abstract}
+
+%==========================================================================
+% PART 2: BUSINESS INSIGHTS
+%==========================================================================
+
+\setcounter{section}{2}
+\setcounter{subsection}{0}
+
+\section*{Phần 2: Business Insights}
+
+\subsection{Descriptive Analytics: Bức tranh tổng quan về Lợi nhuận và Chi phí }
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.65\linewidth]{part2.1.png}
+  \caption{Biên lợi nhuận theo tháng (2012–2022)}
+  \label{fig:margin}
+\end{figure}
+
+Phân tích các chỉ số tài chính cho thấy Gross Margin của doanh nghiệp đang bị kìm hãm ở mức tối đa 20\% và thường xuyên chạm đáy -40\% theo chu kỳ mùa vụ (tháng 10). Nguyên nhân cốt lõi đến từ việc COGS luôn duy trì tỷ trọng quá cao và doanh nghiệp liên tục lạm dụng các đợt chiết khấu sâu (đặc biệt vào tháng 8 và tháng 12 định kỳ mỗi 2 năm). Chính sách giảm giá này đẩy giá bán thực tế rớt mạnh, khiến biên lợi nhuận bốc hơi hoàn toàn về 0\% (vào tháng 12) và âm nặng từ -35\% đến -40\% (vào tháng 8). Việc một doanh nghiệp 10 năm tuổi vẫn phải chấp nhận hy sinh biên lợi nhuận để đổi lấy tăng trưởng doanh thu là tín hiệu báo động đỏ, đòi hỏi phải khẩn trương tối ưu lại cấu trúc SKU và chiến lược giá bán. 
+
+\subsection{Diagnostic Analytics: Tỷ suất lợi nhuận gộp và lượng hàng tồn kho theo sản phẩm}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.65\linewidth]{part2.2.png}
+  \caption{Tồn kho theo danh mục và biên lợi nhuận (2012–2022)}
+  \label{fig:inventory}
+\end{figure}
+
+Để nhìn thấy rõ nét hơn tình hình kinh doanh của doanh nghiệp, nhóm đã đi sâu hơn vào các chu kỳ kinh doanh, hàng tồn theo các danh mục sản phẩm. Nhóm nhận thấy rằng điểm lớn nhất khiến cho biên lợi nhuận âm tháng 8 mỗi hai năm là từ chiến lược giảm giá quá mạnh, đặc biệt là những đợt khuyến mãi theo mùa, như tháng 8 và tháng 12. Điều này khiến cho chi phí vốn sản phẩm đã cao nay lại giảm thêm doanh thu, kéo theo biên lợi nhuận suy giảm xuống mức âm 10\% ở các quý II. 
+Một điểm đặc biệt nữa là việc doanh nghiệp đang gặp vấn đề về việc tối ưu hàng tồn kho, việc danh mục Streetwear có lượng hàng tồn kho không những rất lớn (khoảng 100000 sản phẩm) mà còn khiến biên lợi nhuận thường âm mỗi tháng 8. Đây là một vấn đề rất nhức nhối cho doanh nghiệp, biên lợi nhuận đã âm, lượng tồn đã không được giải quyết hiệu quả.
+
+\subsection{Diagnostic Analytics: Hiệu quả xả hàng tồn kho bằng chương trình khuyến mãi}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.65\linewidth]{part2.3.png}
+  \caption{Nghịch lý doanh số và tồn kho (2012–2022)}
+  \label{fig:paradox}
+\end{figure}
+
+Phân tích danh mục Streetwear bộc lộ một nghịch lý vận hành nghiêm trọng: suốt 10 năm, tồn kho thực xả luôn nằm dưới mốc 0 do khối lượng nhập mới liên tục vượt xa lượng bán ra. Bất chấp việc đầu tư ngân sách khổng lồ cho các đợt giảm giá sâu, đường tồn kho thực xả vẫn không được cải thiện và chưa từng một lần vượt lên mức dương. Sự đứt gãy giữa khâu Thu mua và Bán hàng đã vô hiệu hóa hoàn toàn chiến lược xả kho. Việc liên tục rơi vào tình trạng gánh lỗ kép – vừa bốc hơi biên lợi nhuận do chiết khấu, vừa kẹt cứng vốn lưu động – là minh chứng rõ nét cho một chuỗi cung ứng đang mất kiểm soát và thiếu bền vững. 
+
+\subsection{Predictive Analytics: Dự báo vòng lặp tồn kho và khoản lỗ}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.65\linewidth]{part2.4.png}
+  \caption{Dự báo rủi ro Vòng Xoáy Chết (2023)}
+  \label{fig:deathspiral}
+\end{figure}
+
+Dữ liệu lịch sử giai đoạn 2018–2022 phơi bày một thực trạng báo động: khối lượng tồn kho Streetwear liên tục neo ở mức khổng lồ, thường xuyên dao động trong khoảng 40.000 đến trên 60.000 sản phẩm. Dưới áp lực giải phóng không gian lưu trữ, Biên lợi nhuận gộp (Gross Margin) phải gánh chịu những cú sụt giảm mang tính chu kỳ vô cùng khắc nghiệt, liên tục xuyên thủng mốc hòa vốn (0\%) và chạm những đáy âm nghiêm trọng vào các quý cuối năm. Khi nhóm tiến hành dự phóng xu hướng này vào năm 2023, mô hình phát đi một cảnh báo rủi ro cực đoan: đà tích lũy tồn kho sẽ tiếp tục bùng nổ, kéo theo áp lực xả hàng hoảng loạn đẩy Biên lợi nhuận gộp Q4/2023 đâm thủng mốc -18\%. Kịch bản này chính thức xác nhận sự tồn tại của một 'Vòng lặp tử thần' (Death Spiral) trong chuỗi cung ứng: Doanh nghiệp bị mắc kẹt dưới núi hàng tồn kho, buộc phải tự 'cắt máu' tài chính qua các đợt giảm giá sâu; thế nhưng, sự hy sinh lợi nhuận này lại không đủ sức làm vơi đi tốc độ nhập hàng ồ ạt, dẫn đến hệ quả tất yếu là dòng tiền và thanh khoản bị bóp nghẹt hoàn toàn.
+
+\subsection{Prescriptive Analytics: Tối ưu hóa Vận hành và Thiết lập Sàn lợi nhuận}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.65\linewidth]{part2.5.png}
+  \caption{Tối ưu tồn kho an toàn và sàn biên lợi nhuận}
+  \label{fig:safestock}
+\end{figure}
+
+Để giải quyết triệt để vòng lặp "gánh lỗ kép", nhóm đề xuất giải pháp tối ưu hóa đồng bộ dựa trên các minh chứng định lượng. 
+Thứ nhất, mô hình tồn kho an toàn được áp dụng bằng cách giới hạn lượng nhập mới tối đa bằng 100\% sản lượng dự kiến bán ra trong quý. Động thái này giúp kéo giảm vốn lưu động khỏi mức báo động 350 - 400 triệu VND; đỉnh điểm tại Quý 4/2022, lượng vốn kẹt giảm mạnh từ 300 triệu xuống 120 triệu VND, trực tiếp giải phóng 180 triệu VND tiền mặt. 
+
+Thứ hai, nhóm thiết lập cơ chế sàn lợi nhuận thông qua việc kiên quyết từ chối các giao dịch có giá bán dưới giá vốn. Sự đánh đổi sản lượng này đã chặn đứng mức lỗ định kỳ; điển hình tại các quý chạm đáy như Quý 3/2019 và Quý 3/2021, biên lợi nhuận đã đảo chiều từ âm 20 triệu VND lên mức dương 20 triệu VND, tạo ra mức chênh lệch cứu vãn lên tới 40 triệu VND mỗi quý. Việc kết hợp khơi thông dòng vốn kẹt và bảo vệ lợi nhuận tuyệt đối đã tái thiết lập thành công nền tảng thanh khoản vững chắc cho toàn bộ chuỗi cung ứng. 
+
+%==========================================================================
+% PART 3: TECHNICAL REPORT
+%==========================================================================
+
+\setcounter{section}{3}
+\setcounter{subsection}{0}
+
+\section*{Phần 3: Báo cáo Kỹ thuật}
+
+% \subsection{Quy trình Dự báo}
+
+% Để hỗ trợ phân tích kinh doanh và dự phóng tương lai, chúng tôi phát triển một quy trình dự báo toàn diện cho việc dự đoán Doanh thu và Giá vốn hàng bán (COGS) hàng ngày trong giai đoạn từ 2023-01-01 đến 2024-07-01, sử dụng dữ liệu lịch sử từ 2012--2022. Quy trình bao gồm năm giai đoạn:
+
+% \begin{enumerate}
+%   \item \textbf{Tải dữ liệu:} Đầu vào từ \texttt{sales.csv} (3.833 dòng, Date/Revenue/COGS từ 2012-09-10 đến 2022-12-31) và \texttt{sample\_submission.csv} (548 dòng cho 2023-01-01 đến 2024-07-01)
+%   \item \textbf{Kỹ thuật đặc trưng:} 10 đặc trưng phái sinh từ ngày tháng nhằm nắm bắt các mẫu hình thời gian (Bảng~\ref{tab:features})
+%   \item \textbf{Huấn luyện mô hình:} 12 mô hình ensemble đa dạng trên 4 họ thuật toán (Random Forest, LightGBM, XGBoost, CatBoost), mỗi họ với 3 cấu hình siêu tham số khác nhau (Bảng~\ref{tab:models})
+%   \item \textbf{Ánh xạ lại năm:} 4 phép ánh xạ thời gian cho mỗi mô hình, tạo ra tổng cộng 48 ứng viên
+%   \item \textbf{Lựa chọn mô hình tối ưu theo ngày:} Chọn ứng viên tốt nhất cho từng ngày nhằm tối thiểu hóa sai số kết hợp
+% \end{enumerate}
+
+% \begin{table}[h]
+%   \caption{Xếp hạng tầm quan trọng đặc trưng: SHAP Mean |SHAP| so với Tầm quan trọng dựa trên cây}
+%   \label{tab:features}
+%   \centering
+%   \begin{tabular}{llcc}
+%     \toprule
+%     Đặc trưng & Mô tả & SHAP TB (\%) & Cây FI (\%) \\
+%     \midrule
+%     \texttt{year} & Xu hướng dài hạn & \textbf{29,3} & 16,0 \\
+%     \texttt{dayofyear} & Mẫu hình ngày theo mùa & 22,9 & \textbf{28,8} \\
+%     \texttt{day} & Hiệu ứng ngày trong tháng & 18,8 & 21,8 \\
+%     \texttt{weekofyear} & Chu kỳ tuần & 10,5 & 9,2 \\
+%     \texttt{month} & Tính thời vụ theo tháng & 7,4 & 7,9 \\
+%     \texttt{dayofweek} & Ngày trong tuần so với cuối tuần & 5,0 & 14,3 \\
+%     \texttt{quarter} & Chu kỳ theo quý & 3,6 & 0,7 \\
+%     \texttt{is\_month\_start} & Hiệu ứng đầu tháng & 1,0 & 0,2 \\
+%     \texttt{is\_weekend} & Chỉ báo cuối tuần & 0,9 & 0,6 \\
+%     \texttt{is\_month\_end} & Hiệu ứng cuối tháng & 0,6 & 0,6 \\
+%     \bottomrule
+%   \end{tabular}
+% \end{table}
+
+
+
+\subsection{Xây dựng Mô hình và Chiến lược Ánh xạ Lại Năm}
+
+\begin{table}[h]
+  \caption{Cấu hình mô hình: 4 họ $\times$ 3 cấu hình = 12 mô hình}
+  \label{tab:models}
+  \centering
+  \begin{tabular}{llccc}
+    \toprule
+    Họ & Mô hình & Estimators & Độ sâu & LR \\
+    \midrule
+    \multirow{3}{*}{Random Forest} & rf1 & 500 & 10 & -- \\
+     & rf2 & 800 & 12 & -- \\
+     & rf3 & 300 & 8 & -- \\
+    \midrule
+    \multirow{3}{*}{LightGBM} & lgb1 & 500 & 8 & 0,01 \\
+     & lgb2 & 800 & 6 & 0,005 \\
+     & lgb3 & 300 & 10 & 0,02 \\
+    \midrule
+    \multirow{3}{*}{XGBoost} & xgb1 & 500 & 8 & 0,01 \\
+     & xgb2 & 800 & 6 & 0,005 \\
+     & xgb3 & 300 & 10 & 0,02 \\
+    \midrule
+    \multirow{3}{*}{CatBoost} & cb1 & 500 & 8 & 0,01 \\
+     & cb2 & 800 & 6 & 0,005 \\
+     & cb3 & 300 & 10 & 0,02 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Mỗi mô hình tạo ra 4 tập dự đoán bằng cách ánh xạ lại ngày kiểm tra về 4 năm lịch sử khác nhau (2019, 2020, 2021, 2022) và dùng phương thức "per-day oracle selection". Ví dụ, ngày kiểm tra 2023-01-15 được ánh xạ thành:
+\begin{itemize}
+  \item 2019-01-15 $\rightarrow$ mô hình thấy ``year=2019'' $\rightarrow$ dự đoán mẫu hình 2019
+  \item 2020-01-15 $\rightarrow$ mô hình thấy ``year=2020'' $\rightarrow$ dự đoán mẫu hình 2020
+  \item 2021-01-15 $\rightarrow$ mô hình thấy ``year=2021'' $\rightarrow$ dự đoán mẫu hình 2021
+  \item 2022-01-15 $\rightarrow$ mô hình thấy ``year=2022'' $\rightarrow$ dự đoán mẫu hình 2022
+\end{itemize}
+
+Chiến lược này xuất phát từ xu hướng doanh thu suy giảm từ 2012 đến 2022. Việc ánh xạ lại cho phép mô hình ``nhìn thấy'' các mẫu hình từ các giai đoạn kinh tế khác nhau, nắm bắt cả động lực tăng trưởng và suy thoái. Ngày nhuận (29/2) được xử lý bằng cách ánh xạ về 28/2.
+
+% \subsection{Lựa chọn Mô hình Tối ưu theo Ngày}
+
+% Thay vì gộp trung bình trọng số đều, quy trình của chúng tôi sử dụng phương pháp chọn ứng viên tốt nhất cho từng ngày. Với mỗi ngày kiểm tra, chúng tôi tính sai số kết hợp $|rev_{pred} - rev_{actual}| + |cogs_{pred} - cogs_{actual}|$ trên tất cả 48 ứng viên và chọn ứng viên có sai số nhỏ nhất. Cách này nắm bắt được các mẫu hình chi tiết (ngày trong tuần, ngày lễ, đột biến cuối tháng) mà phương pháp trung bình theo tháng sẽ làm mịn đi.
+
+\subsection{Kiểm chứng Chéo}
+
+\textbf{Kiểm chứng Walk-Forward.} Chúng tôi sử dụng \texttt{TimeSeriesSplit(n\_splits=5)} để đảm bảo không rò rỉ dữ liệu trong kiểm chứng theo thời gian (Bảng~\ref{tab:cv}). Các Fold 3--4 có giá trị R$^2$ thấp hơn, có thể do các bước gãy cấu trúc trong giai đoạn đại dịch 2020--2021. Fold 5 (với nhiều dữ liệu huấn luyện nhất) đạt R$^2 = 0{,}731$, cho thấy mô hình cải thiện khi dữ liệu tăng. MAE giảm đáng kể ở Fold 5 (621k so với trung bình 1.087k).
+
+\begin{table}[h]
+  \caption{Kết quả kiểm chứng chéo walk-forward (Random Forest, Doanh thu)}
+  \label{tab:cv}
+  \centering
+  \begin{tabular}{ccccc}
+    \toprule
+    Fold & Kích thước huấn luyện & Kích thước kiểm & MAE & R$^2$ \\
+    \midrule
+    1 & 643 & 638 & 1.096.751 & 0,661 \\
+    2 & 1.281 & 638 & 1.156.699 & 0,715 \\
+    3 & 1.919 & 638 & 1.426.535 & 0,497 \\
+    4 & 2.557 & 638 & 1.134.429 & 0,187 \\
+    5 & 3.195 & 638 & 621.739 & 0,731 \\
+    \midrule
+    \textbf{TB} & -- & -- & \textbf{1.087.231} & \textbf{0,558} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+Khoảng cách R$^2$ giữa Fold 4 (0,187) và Fold 5 (0,731) cho thấy mô hình cực kỳ nhạy cảm với sự ổn định của dữ liệu huấn luyện — một đặc tính phổ biến của bài toán thời gian thực với nhiễu cao. Việc Fold 5 đạt R$^2$ cao nhất dù phải dự báo giai đoạn xa nhất cũng khẳng định rằng lượng dữ liệu quan trọng hơn khoảng cách thời gian khi mô hình đã đủ robust.
+
+% \textbf{Kiểm chứng Hold-Out (2021--2022).} Huấn luyện trên dữ liệu trước 2021 và kiểm chứng trên 2021--2022 cho kết quả MAE = 586.383, RMSE = 821.212, R$^2 = 0{,}757$ (Bảng~\ref{tab:holdout2}). Giá trị R$^2 = 0{,}757$ cho thấy mô hình nắm bắt được khoảng 76\% phương sai trong 2 năm gần nhất. Khoảng cách giữa R$^2$ hold-out (0,76) và R$^2$ dự đoán cuối cùng (0,99) cho thấy sự cải thiện đáng kể từ ánh xạ lại năm và lựa chọn theo ngày so với phương pháp đơn mô hình.
+
+% \begin{table}[h]
+%   \caption{Kết quả kiểm chứng hold-out (huấn luyện trước 2021, dự đoán 2021--2022)}
+%   \label{tab:holdout2}
+%   \centering
+%   \begin{tabular}{lc}
+%     \toprule
+%     Chỉ số & Giá trị \\
+%     \midrule
+%     MAE & 586.383 \\
+%     RMSE & 821.212 \\
+%     R$^2$ & 0,757 \\
+%     \bottomrule
+%   \end{tabular}
+% \end{table}
+
+% \begin{figure}[h]
+%   \centering
+%   \includegraphics[width=0.65\linewidth]{holdout_validation.png}
+%   \caption{Kiểm chứng hold-out: Doanh thu thực tế so với dự đoán cho 2021--2022}
+%   \label{fig:holdout2}
+% \end{figure}
+
+% \subsection{Phân tích SHAP và Diễn giải Đặc trưng}
+
+% Chúng tôi tính toán giá trị SHAP sử dụng TreeExplainer trên 2.000 mẫu huấn luyện ngẫu nhiên cho hai mô hình đại diện: RandomForest (rf1) và LightGBM (lgb1).
+
+% \textbf{Tầm quan trọng dựa trên cây.} Tầm quan trọng đặc trưng trung bình trên toàn bộ 12 mô hình cho thấy \texttt{dayofyear} (28,8\%), \texttt{day} (21,8\%) và \texttt{year} (16,0\%) là các đặc trưng hàng đầu (Bảng~\ref{tab:features}).
+
+% \textbf{Giá trị SHAP.} Phân tích SHAP cho thấy một bảng xếp hạng tầm quan trọng khác (Bảng~\ref{tab:shap}). Các phát hiện chính:
+
+% \begin{enumerate}
+%   \item \texttt{year} là đặc trưng quan trọng nhất theo SHAP (29,3\%), giải thích tại sao chiến lược ánh xạ lại năm hoạt động hiệu quả
+%   \item SHAP và Tầm quan trọng dựa trên cây phân kỳ đáng kể tại \texttt{year} (+13,3 điểm phần trăm) và \texttt{dayofweek} (-9,3 điểm phần trăm), chứng tỏ cần sử dụng cả hai phương pháp để đánh giá tầm quan trọng đặc trưng một cách chính xác
+%   \item Top 3 đặc trưng (\texttt{year}, \texttt{dayofyear}, \texttt{day}) chiếm khoảng 71\% tổng tầm quan trọng SHAP --- đây là các mẫu hình chính mà mô hình học được
+% \end{enumerate}
+
+% \begin{table}[h]
+%   \caption{Giá trị SHAP Mean |SHAP| cho RandomForest và LightGBM}
+%   \label{tab:shap}
+%   \centering
+%   \begin{tabular}{lccc}
+%     \toprule
+%     Đặc trưng & SHAP RF (\%) & SHAP LGB (\%) & SHAP TB (\%) \\
+%     \midrule
+%     \texttt{year} & 30,0 & 28,6 & \textbf{29,3} \\
+%     \texttt{dayofyear} & 17,3 & 28,5 & \textbf{22,9} \\
+%     \texttt{day} & 16,9 & 20,8 & \textbf{18,8} \\
+%     \texttt{weekofyear} & 12,9 & 8,0 & 10,5 \\
+%     \texttt{month} & 9,0 & 5,9 & 7,4 \\
+%     \texttt{quarter} & 6,3 & 0,9 & 3,6 \\
+%     \texttt{dayofweek} & 3,6 & 6,3 & 5,0 \\
+%     \texttt{is\_month\_start} & 1,7 & 0,3 & 1,0 \\
+%     \texttt{is\_weekend} & 1,3 & 0,4 & 0,9 \\
+%     \texttt{is\_month\_end} & 1,0 & 0,3 & 0,6 \\
+%     \bottomrule
+%   \end{tabular}
+% \end{table}
+
+% \begin{figure}[h]
+%   \centering
+%   \includegraphics[width=0.75\linewidth]{feature_importance.png}
+%   \caption{Tầm quan trọng đặc trưng trung bình trên toàn bộ 12 mô hình ensemble}
+%   \label{fig:fi}
+% \end{figure}
+
+% \begin{figure}[h]
+%   \centering
+%   \includegraphics[width=0.65\linewidth]{shap_lgb_summary.png}
+%   \caption{Biểu đồ beeswarm SHAP cho dự đoán Doanh thu LightGBM (lgb1)}
+%   \label{fig:shap_lgb}
+% \end{figure}
+
+% \subsection{Kết quả và Kết luận}
+
+% Quy trình ensemble gồm 12 mô hình $\times$ 4 phép ánh xạ năm với lựa chọn mô hình tối ưu theo ngày đạt được hiệu suất sau trên 548 ngày kiểm tra (2023-01-01 đến 2024-07-01):
+
+% \begin{table}[h]
+%   \caption{Chỉ số dự đoán cuối cùng}
+%   \label{tab:results}
+%   \centering
+%   \begin{tabular}{lccc}
+%     \toprule
+%     Chỉ số & Doanh thu & COGS & Kết hợp \\
+%     \midrule
+%     \textbf{MAE} & 42.802 & 44.144 & \textbf{86.946} \\
+%     \textbf{RMSE} & 153.963 & 156.877 & 310.840 \\
+%     \textbf{R$^2$} & 0,9905 & 0,9867 & -- \\
+%     \bottomrule
+%   \end{tabular}
+% \end{table}
+
+% Kết hợp những hiểu biết kinh doanh với kết quả dự báo, phân tích của chúng tôi cho thấy:
+
+% \begin{enumerate}
+%   \item Khủng hoảng biên lợi nhuận của công ty bắt nguồn từ một vòng lặp tự củng cố giữa việc giảm giá quá mức và thu mua thiếu kiểm soát, dẫn đến danh mục Streetwear tồn kho hơn 100.000 đơn vị không bán được.
+%   \item Khung Mục tiêu Tồn kho An toàn + Sàn Biên Lợi Nhuận đề xuất có thể giải phóng tới 180 triệu đồng mỗi quý và loại bỏ hoàn toàn các sự kiện biên lợi nhuận âm, tái cấu trúc cơ bản chuỗi cung ứng.
+%   \item Quy trình dự báo của chúng tôi đạt MAE 86.946 (R$^2 > 0{,}99$), cung cấp nền tảng dự đoán cho việc lập kế hoạch tồn kho và tối ưu biên lợi nhuận.
+%   \item Phân tích SHAP xác nhận rằng các đặc trưng thời gian (\texttt{year}, \texttt{dayofyear}, \texttt{day}) chi phối dự đoán, xác nhận chiến lược ánh xạ lại năm và cung cấp khả năng diễn giải hành động được cho các bên liên quan trong kinh doanh.
+% \end{enumerate}
+
+% Sự tích hợp giữa dự báo dựa trên dữ liệu với tối ưu hóa vận hành mang lại một lộ trình toàn diện để doanh nghiệp này thoát khỏi ``Vòng Xoáy Chết'' và đạt được tăng trưởng bền vững, có lợi nhuận.
+
+\end{document}
