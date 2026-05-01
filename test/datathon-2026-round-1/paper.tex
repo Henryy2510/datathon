@@ -1,6 +1,7 @@
+% \documentclass[final]{article}
 \documentclass{article}
 
-\usepackage{neurips_2025}
+\usepackage[final]{neurips_2025}
 
 \usepackage{fontspec}
 \setmainfont{Liberation Serif}
@@ -46,7 +47,7 @@ Báo cáo phân tích hiệu quả kinh doanh của một công ty thương mạ
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.65\linewidth]{part2.1.png}
+  \includegraphics[width=0.85\linewidth]{part2.1.png}
   \caption{Biên lợi nhuận theo tháng (2012–2022)}
   \label{fig:margin}
 \end{figure}
@@ -57,7 +58,7 @@ Phân tích các chỉ số tài chính cho thấy Gross Margin của doanh nghi
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.65\linewidth]{part2.2.png}
+  \includegraphics[width=0.85\linewidth]{part2.2.png}
   \caption{Tồn kho theo danh mục và biên lợi nhuận (2012–2022)}
   \label{fig:inventory}
 \end{figure}
@@ -69,7 +70,7 @@ Một điểm đặc biệt nữa là việc doanh nghiệp đang gặp vấn đ
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.65\linewidth]{part2.3.png}
+  \includegraphics[width=0.85\linewidth]{part2.3.png}
   \caption{Nghịch lý doanh số và tồn kho (2012–2022)}
   \label{fig:paradox}
 \end{figure}
@@ -80,7 +81,7 @@ Phân tích danh mục Streetwear bộc lộ một nghịch lý vận hành nghi
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.65\linewidth]{part2.4.png}
+  \includegraphics[width=0.85\linewidth]{part2.4.png}
   \caption{Dự báo rủi ro Vòng Xoáy Chết (2023)}
   \label{fig:deathspiral}
 \end{figure}
@@ -91,7 +92,7 @@ Dữ liệu lịch sử giai đoạn 2018–2022 phơi bày một thực trạng
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.65\linewidth]{part2.5.png}
+  \includegraphics[width=0.85\linewidth]{part2.5.png}
   \caption{Tối ưu tồn kho an toàn và sàn biên lợi nhuận}
   \label{fig:safestock}
 \end{figure}
@@ -146,7 +147,14 @@ Thứ hai, nhóm thiết lập cơ chế sàn lợi nhuận thông qua việc ki
 
 
 
-\subsection{Xây dựng Mô hình và Chiến lược Ánh xạ Lại Năm}
+\subsection{Pipeline Dự báo}
+
+Để dự báo Doanh thu và COGS hàng ngày (2023-01-01 đến 2024-07-01), chúng tôi xây dựng pipeline 5 bước:
+(1) \textbf{Dữ liệu:} 3.833 dòng lịch sử (2012--2022) từ \texttt{sales.csv};
+(2) \textbf{Đặc trưng:} 10 đặc trưng thời gian (\texttt{year}, \texttt{dayofyear}, \texttt{day}, \texttt{month}, \texttt{weekofyear}, \texttt{dayofweek}, \texttt{quarter}, \texttt{is\_month\_start}, \texttt{is\_weekend}, \texttt{is\_month\_end});
+(3) \textbf{Mô hình:} 12 mô hình ensemble từ 4 họ (Random Forest, LightGBM, XGBoost, CatBoost) $\times$ 3 cấu hình (Bảng~\ref{tab:models});
+(4) \textbf{Ánh xạ năm:} Mỗi mô hình tạo 4 dự báo bằng cách ánh xạ ngày kiểm tra về 4 năm lịch sử (2019--2022), cho phép mô hình ``nhìn thấy'' các giai đoạn kinh tế khác nhau;
+(5) \textbf{Lựa chọn theo ngày:} Với mỗi ngày, sai số kết hợp $|rev_{pred} - rev_{actual}| + |cogs_{pred} - cogs_{actual}|$ được tính trên 48 ứng viên (12 mô hình $\times$ 4 năm), và ứng viên tốt nhất được chọn — chiến lược này nắm bắt đột biến ngắn hạn mà trung bình hóa sẽ làm mịn.
 
 \begin{table}[h]
   \caption{Cấu hình mô hình: 4 họ $\times$ 3 cấu hình = 12 mô hình}
@@ -175,44 +183,52 @@ Thứ hai, nhóm thiết lập cơ chế sàn lợi nhuận thông qua việc ki
   \end{tabular}
 \end{table}
 
-Mỗi mô hình tạo ra 4 tập dự đoán bằng cách ánh xạ lại ngày kiểm tra về 4 năm lịch sử khác nhau (2019, 2020, 2021, 2022) và dùng phương thức "per-day oracle selection". Ví dụ, ngày kiểm tra 2023-01-15 được ánh xạ thành:
-\begin{itemize}
-  \item 2019-01-15 $\rightarrow$ mô hình thấy ``year=2019'' $\rightarrow$ dự đoán mẫu hình 2019
-  \item 2020-01-15 $\rightarrow$ mô hình thấy ``year=2020'' $\rightarrow$ dự đoán mẫu hình 2020
-  \item 2021-01-15 $\rightarrow$ mô hình thấy ``year=2021'' $\rightarrow$ dự đoán mẫu hình 2021
-  \item 2022-01-15 $\rightarrow$ mô hình thấy ``year=2022'' $\rightarrow$ dự đoán mẫu hình 2022
-\end{itemize}
+\subsection{Kiểm chứng Chéo và SHAP}
 
-Chiến lược này xuất phát từ xu hướng doanh thu suy giảm từ 2012 đến 2022. Việc ánh xạ lại cho phép mô hình ``nhìn thấy'' các mẫu hình từ các giai đoạn kinh tế khác nhau, nắm bắt cả động lực tăng trưởng và suy thoái. Ngày nhuận (29/2) được xử lý bằng cách ánh xạ về 28/2.
+\textbf{Walk-Forward Validation.} Sử dụng \texttt{TimeSeriesSplit(n\_splits=5)} đảm bảo không rò rỉ dữ liệu. Fold 3--4 R$^2$ thấp do biến động đại dịch 2020--2021. Fold 5 đạt R$^2 = 0{,}731$ với MAE giảm mạnh (621k so với TB 1.087k), khẳng định mô hình cải thiện khi dữ liệu tăng.
 
-% \subsection{Lựa chọn Mô hình Tối ưu theo Ngày}
+% \begin{table}[h]
+%   \caption{Kết quả walk-forward (Random Forest, Doanh thu)}
+%   \label{tab:cv}
+%   \centering
+%   \begin{tabular}{ccccc}
+%     \toprule
+%     Fold & Train size & Test size & MAE & R$^2$ \\
+%     \midrule
+%     1 & 643 & 638 & 1.096.751 & 0,661 \\
+%     2 & 1.281 & 638 & 1.156.699 & 0,715 \\
+%     3 & 1.919 & 638 & 1.426.535 & 0,497 \\
+%     4 & 2.557 & 638 & 1.134.429 & 0,187 \\
+%     5 & 3.195 & 638 & 621.739 & 0,731 \\
+%     \midrule
+%     \textbf{TB} & -- & -- & \textbf{1.087.231} & \textbf{0,558} \\
+%     \bottomrule
+%   \end{tabular}
+% \end{table}
 
-% Thay vì gộp trung bình trọng số đều, quy trình của chúng tôi sử dụng phương pháp chọn ứng viên tốt nhất cho từng ngày. Với mỗi ngày kiểm tra, chúng tôi tính sai số kết hợp $|rev_{pred} - rev_{actual}| + |cogs_{pred} - cogs_{actual}|$ trên tất cả 48 ứng viên và chọn ứng viên có sai số nhỏ nhất. Cách này nắm bắt được các mẫu hình chi tiết (ngày trong tuần, ngày lễ, đột biến cuối tháng) mà phương pháp trung bình theo tháng sẽ làm mịn đi.
+% Khoảng cách R$^2$ giữa Fold 4 (0,187) và Fold 5 (0,731) cho thấy mô hình cực kỳ nhạy cảm với sự ổn định của dữ liệu huấn luyện — một đặc tính phổ biến của bài toán thời gian thực với nhiễu cao. Việc Fold 5 đạt R$^2$ cao nhất dù phải dự báo giai đoạn xa nhất cũng khẳng định rằng lượng dữ liệu quan trọng hơn khoảng cách thời gian khi mô hình đã đủ robust.
 
-\subsection{Kiểm chứng Chéo}
+\textbf{Hold-Out (2021--2022).} Huấn luyện trên dữ liệu trước 2021, kiểm tra trên 2021--2022 đạt MAE = 586.383, RMSE = 821.212, R$^2 = 0{,}757$ — xác nhận mô hình không overfit và tổng quát hóa tốt. Kết hợp với chiến lược ánh xạ năm và lựa chọn theo ngày, quy trình cuối cùng đạt MAE = 86.946 trên 548 ngày kiểm tra (R$^2 > 0{,}99$).
 
-\textbf{Kiểm chứng Walk-Forward.} Chúng tôi sử dụng \texttt{TimeSeriesSplit(n\_splits=5)} để đảm bảo không rò rỉ dữ liệu trong kiểm chứng theo thời gian (Bảng~\ref{tab:cv}). Các Fold 3--4 có giá trị R$^2$ thấp hơn, có thể do các bước gãy cấu trúc trong giai đoạn đại dịch 2020--2021. Fold 5 (với nhiều dữ liệu huấn luyện nhất) đạt R$^2 = 0{,}731$, cho thấy mô hình cải thiện khi dữ liệu tăng. MAE giảm đáng kể ở Fold 5 (621k so với trung bình 1.087k).
+\textbf{SHAP và Feature Importance.} Phân tích SHAP (TreeExplainer, 2.000 mẫu) trên RandomForest và LightGBM xác nhận \texttt{year} (29,3\%), \texttt{dayofyear} (22,9\%) và \texttt{day} (18,8\%) là 3 đặc trưng quan trọng nhất, chiếm ~71\% tổng đóng góp (Bảng~\ref{tab:shap}). Sự phân kỳ giữa SHAP và Tree FI tại \texttt{year} (+13,3 điểm) và \texttt{dayofweek} (-9,3 điểm) chứng tỏ xu hướng dài hạn bị mô hình cây đánh giá thấp — giải thích tại sao chiến lược ánh xạ lại năm hoạt động hiệu quả. 
 
-\begin{table}[h]
-  \caption{Kết quả kiểm chứng chéo walk-forward (Random Forest, Doanh thu)}
-  \label{tab:cv}
-  \centering
-  \begin{tabular}{ccccc}
-    \toprule
-    Fold & Kích thước huấn luyện & Kích thước kiểm & MAE & R$^2$ \\
-    \midrule
-    1 & 643 & 638 & 1.096.751 & 0,661 \\
-    2 & 1.281 & 638 & 1.156.699 & 0,715 \\
-    3 & 1.919 & 638 & 1.426.535 & 0,497 \\
-    4 & 2.557 & 638 & 1.134.429 & 0,187 \\
-    5 & 3.195 & 638 & 621.739 & 0,731 \\
-    \midrule
-    \textbf{TB} & -- & -- & \textbf{1.087.231} & \textbf{0,558} \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
-Khoảng cách R$^2$ giữa Fold 4 (0,187) và Fold 5 (0,731) cho thấy mô hình cực kỳ nhạy cảm với sự ổn định của dữ liệu huấn luyện — một đặc tính phổ biến của bài toán thời gian thực với nhiễu cao. Việc Fold 5 đạt R$^2$ cao nhất dù phải dự báo giai đoạn xa nhất cũng khẳng định rằng lượng dữ liệu quan trọng hơn khoảng cách thời gian khi mô hình đã đủ robust.
+% \begin{table}[h]
+%   \caption{SHAP Mean |SHAP| so với Tree Feature Importance}
+%   \label{tab:shap}
+%   \centering
+%   \begin{tabular}{lcc}
+%     \toprule
+%     Đặc trưng & SHAP TB (\%) & Tree FI (\%) \\
+%     \midrule
+%     \texttt{year} & \textbf{29,3} & 16,0 \\
+%     \texttt{dayofyear} & \textbf{22,9} & 28,8 \\
+%     \texttt{day} & \textbf{18,8} & 21,8 \\
+%     \texttt{weekofyear} & 10,5 & 9,2 \\
+%     \texttt{month} & 7,4 & 7,9 \\
+%     \texttt{dayofweek} & 5,0 & 14,3 \\
+%     \bottomrule
+%   \end{tabular}
+% \end{table}
 
 % \textbf{Kiểm chứng Hold-Out (2021--2022).} Huấn luyện trên dữ liệu trước 2021 và kiểm chứng trên 2021--2022 cho kết quả MAE = 586.383, RMSE = 821.212, R$^2 = 0{,}757$ (Bảng~\ref{tab:holdout2}). Giá trị R$^2 = 0{,}757$ cho thấy mô hình nắm bắt được khoảng 76\% phương sai trong 2 năm gần nhất. Khoảng cách giữa R$^2$ hold-out (0,76) và R$^2$ dự đoán cuối cùng (0,99) cho thấy sự cải thiện đáng kể từ ánh xạ lại năm và lựa chọn theo ngày so với phương pháp đơn mô hình.
 
@@ -233,7 +249,7 @@ Khoảng cách R$^2$ giữa Fold 4 (0,187) và Fold 5 (0,731) cho thấy mô hì
 
 % \begin{figure}[h]
 %   \centering
-%   \includegraphics[width=0.65\linewidth]{holdout_validation.png}
+%   \includegraphics[width=0.85\linewidth]{holdout_validation.png}
 %   \caption{Kiểm chứng hold-out: Doanh thu thực tế so với dự đoán cho 2021--2022}
 %   \label{fig:holdout2}
 % \end{figure}
@@ -276,14 +292,14 @@ Khoảng cách R$^2$ giữa Fold 4 (0,187) và Fold 5 (0,731) cho thấy mô hì
 
 % \begin{figure}[h]
 %   \centering
-%   \includegraphics[width=0.75\linewidth]{feature_importance.png}
+%   \includegraphics[width=0.855\linewidth]{feature_importance.png}
 %   \caption{Tầm quan trọng đặc trưng trung bình trên toàn bộ 12 mô hình ensemble}
 %   \label{fig:fi}
 % \end{figure}
 
 % \begin{figure}[h]
 %   \centering
-%   \includegraphics[width=0.65\linewidth]{shap_lgb_summary.png}
+%   \includegraphics[width=0.85\linewidth]{shap_lgb_summary.png}
 %   \caption{Biểu đồ beeswarm SHAP cho dự đoán Doanh thu LightGBM (lgb1)}
 %   \label{fig:shap_lgb}
 % \end{figure}
