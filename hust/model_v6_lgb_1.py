@@ -323,7 +323,7 @@ y_es = y_train[es_mask]
 sw_es = sample_weight[es_mask]
 
 # %% [6] Train candidates and score business/calendar validation
-state_cols = ["Date", "ItemCode", "Quantity", "SalesAmount", "CostAmount", "UnitPrice", "UnitCost", "sales_err", "cost_err", "UnitPrice_capped", "UnitCost_capped", "margin", "margin_pct", "profit", "y"]
+state_cols = ["Date", "ItemCode", "Quantity", "SalesAmount", "CostAmount", "UnitPrice", "UnitCost", "sales_err", "cost_err", "UnitPrice_capped", "UnitCost_capped", "margin", "margin_pct", "margin_capped", "profit", "y"]
 
 
 def calendar_eval_from_business(pred_values):
@@ -355,7 +355,7 @@ def recursive_forecast(model_dict: dict, blend_names: list, blend_weights: np.nd
         last_vals = state.groupby("ItemCode", observed=True).tail(1).set_index("ItemCode")
         step = pd.DataFrame({"Date": d, "ItemCode": all_skus})
         step["ItemCode"] = step["ItemCode"].astype("category")
-        step = step.join(last_vals[["UnitPrice", "UnitCost", "UnitPrice_capped", "UnitCost_capped", "margin", "margin_pct"]], on="ItemCode")
+        step = step.join(last_vals[["UnitPrice", "UnitCost", "UnitPrice_capped", "UnitCost_capped", "margin", "margin_pct", "margin_capped"]], on="ItemCode")
         for c in ["Quantity", "SalesAmount", "CostAmount", "sales_err", "cost_err", "profit"]:
             step[c] = 0.0
         step["y"] = np.nan
@@ -482,7 +482,7 @@ for d in future_dates:
     last_vals = state.groupby("ItemCode", observed=True).tail(1).set_index("ItemCode")
     step = pd.DataFrame({"Date": d, "ItemCode": all_skus})
     step["ItemCode"] = step["ItemCode"].astype("category")
-    step = step.join(last_vals[["UnitPrice", "UnitCost", "UnitPrice_capped", "UnitCost_capped", "margin", "margin_pct"]], on="ItemCode")
+    step = step.join(last_vals[["UnitPrice", "UnitCost", "UnitPrice_capped", "UnitCost_capped", "margin", "margin_pct", "margin_capped"]], on="ItemCode")
     for c in ["Quantity", "SalesAmount", "CostAmount", "sales_err", "cost_err", "profit"]:
         step[c] = 0.0
     step["y"] = np.nan
