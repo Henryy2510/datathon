@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026/Arch Linux) (preloaded format=xelatex 2026.4.29)  1 MAY 2026 23:22
+This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026/Arch Linux) (preloaded format=xelatex 2026.4.29)  2 MAY 2026 00:03
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -691,29 +691,21 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 [2]
 File: part2.5.png Graphic file (type bmp)
 <part2.5.png>
- [3]
-
-LaTeX Warning: Reference `tab:shap' on page 4 undefined on input line 213.
-
-[4] (./paper.aux)
+ [3] [4] [5] (./paper.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
  ***********
-
-
-LaTeX Warning: There were undefined references.
-
 Package rerunfilecheck Info: File `paper.out' has not changed.
 (rerunfilecheck)             Checksum: 073BD378D00C08A6151A7120E6EC26FC;2629.
  ) 
 Here is how much of TeX's memory you used:
- 16068 strings out of 470191
- 306444 string characters out of 5479697
+ 16067 strings out of 470191
+ 306434 string characters out of 5479697
  801285 words of memory out of 5000000
- 44444 multiletter control sequences out of 15000+600000
+ 44443 multiletter control sequences out of 15000+600000
  630036 words of font info for 81 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  73i,10n,93p,1075b,356s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on paper.pdf (4 pages).
+Output written on paper.pdf (5 pages).
