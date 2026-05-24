@@ -11,11 +11,19 @@ wheels/
 
 # data
 data/
-
-test/*model*
+datathon-competition/*model*
 src/*model*
-test/datathon-2026-round-1/*submissionv*
+datathon-competition/datathon-2026-round-1/*submissionv*
 src/datathon-2026-round-1/*submissionv*
+part3_executed.ipynb
+submission_v4.csv
+part3_report_executed.ipynb
+part3_report.ipynb
+report_data.json
+neurips_2024.sty
+neurips_2025.sty
+neurips_2025.tex
+datathon-competition/catboost_info/
 
 # tài liệu tham khảo
 Maternal Health Risk Prediction Challenge/
